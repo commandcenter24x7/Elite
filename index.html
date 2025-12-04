@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cautio - Command Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #18181b;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #18181b;
+            padding: 20px 40px;
+            border-bottom: 1px solid #27272a;
+            text-align: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .project-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #a0a0a0;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #a0a0a0;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .vehicle-card {
+            background: #151515;
+            border-radius: 12px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #1a1a1a;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+
+        .vehicle-number {
+            display: inline-block;
+            background: #ffd700;
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 18px;
+            border: 2px solid #000;
+        }
+
+        .vehicle-number::before {
+            content: 'IND';
+            font-size: 11px;
+            margin-right: 6px;
+            padding: 2px 5px;
+            background: #3b82f6;
+            color: #fff;
+            border-radius: 2px;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            border-color: #0066ff;
+            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.3);
+            background: #1a1a1a;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .vehicles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <!-- Replace 'path-to-your-logo.png' with your actual logo image path -->
+            <img src="/Screenshot 2025-12-04 201500.png" alt="Cautio Logo" class="logo-img" onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block';">
+            <div class="logo-fallback" style="display: none; font-size: 32px; font-weight: 700; color: #fff;">cautio</div>
+            <span class="project-name">Elite</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">Vehicle Tracking Dashboard</h1>
+        <p class="page-subtitle">Click on any vehicle to view live tracking</p>
+        <div class="vehicles-grid" id="vehiclesGrid"></div>
+    </div>
+
+    <script>
+        const vehicles = [
+            {
+                number: 'KA05AQ5840',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoidmNpb24wMmpucnI0bnJ6ZXJoamVzaGc0Iiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI0NjgwLCJleHAiOjE3OTYzNjA2ODB9.gUtLeyEOxUzeQs5xeD9KkrOQW3ZUG3b_lNap-LF-CcI'
+            },
+            {
+                number: 'KA05AQ5841',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoibnJ3cjRwcGtyNnRjenpjYnhpdTY2aXJlIiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI0NzU5LCJleHAiOjE3OTYzNjA3NTl9.1PN7wuAxIoNEbd9N2SCoTMQMIXGPXJBGYeEGcaEpj9M'
+            },
+            {
+                number: 'KA51AG2500',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoia2Y5eW5qOGk3ZDR3cTJ3YzJkOHFybnk1Iiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI0ODM4LCJleHAiOjE3OTYzNjA4Mzh9.JCZWj-5OuUhX6ACr8hrCizCdmr6ruibrooYHxptN36s'
+            },
+            {
+                number: 'KA30A3415',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoiY2UzbW8ydjR0ZnMzdzdyN2Z0bXZqY3oxIiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI0ODgxLCJleHAiOjE3OTYzNjA4ODF9.l8b0Ev5gy7ccnFnPvyiq-oFwmY885SyIBwGT6iGa1j8'
+            },
+            {
+                number: 'KA51AG2504',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoicWFxbjE2OG1lZXNid2MzbzE4eHo0bWU0Iiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI0OTQzLCJleHAiOjE3OTYzNjA5NDN9.KNtgjxrAV46hId-T_c3HlBnzIujzwRFYwE38s_2bElQ'
+            },
+            {
+                number: 'KA06AC3047',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoiZjgxcjlxbTlvb2p4ZzdvaHhzcWEzcHZmIiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI1MDA0LCJleHAiOjE3OTYzNjEwMDR9.XIkhMkuJ__QRBXnwCR1VVLAjyq388enYjFHHPG1E9TY'
+            },
+            {
+                number: 'KA18C7787',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoiYmsxZDhnYmp5MjA5Ym4wcWc5MmZ5eGI2Iiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI1MDU0LCJleHAiOjE3OTYzNjEwNTR9.cegCS8uX2Y2ZlVLGMTUx5geV_3GUDK3l5fd_gVuMW7k'
+            },
+            {
+                number: 'MH12WX8766',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoicG9uZGtnemRmaDV2NHBkZXA4M21ucXF3Iiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODI1MTM5LCJleHAiOjE3OTYzNjExMzl9.GvGaU4hGFdJbECRX_aoCGbykkJFSq3ROvVnFlbx4rR0'
+            },
+            {
+                number: 'KA05AQ6685',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoib3Nzd3RuZ3F1ZTFhYnNsZWVyNG82a3o3Iiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODU1ODQzLCJleHAiOjE3OTYzOTE4NDN9.IfwxuD_reAFa8UrzS__EIOvsEk9leZ3M-y7YlGHuxG8'
+            },
+            {
+                number: 'KA05AQ6686',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoieTZua2Zlams1N2ZibHF1YzBkaTR3dm5tIiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODU1ODg5LCJleHAiOjE3OTYzOTE4ODl9.rt-OY3mVgA2b0BPz4vlNPLOBPHXY5Lx2ddODNuNYevM'
+            },
+            {
+                number: 'KA05AQ3420',
+                link: 'https://track.cautio.xyz/en?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZWhpY2xlX2lkIjoibnJucnRwaGx0czN6M2c3dGxvODhmejZoIiwib3JnYW5pc2F0aW9uX2lkIjoiZmJ0bTVmemZiZm43YWpiM3k2OHpmd3RkIiwiYWN0aXZlX2Zyb20iOiIwMDowMCIsImFjdGl2ZV90byI6IjIzOjMwIiwiaWF0IjoxNzY0ODU3Nzg2LCJleHAiOjE3OTYzOTM3ODZ9.CBMv9rNbzYeYUXvJdnLE3tQeNdibWj1dKxauJA9y45Q'
+            }
+        ];
+
+        const grid = document.getElementById('vehiclesGrid');
+
+        vehicles.forEach((vehicle, index) => {
+            const card = document.createElement('div');
+            card.className = 'vehicle-card';
+            card.onclick = () => window.open(vehicle.link, '_blank');
+            
+            card.innerHTML = `
+                <div class="vehicle-number">${vehicle.number}</div>
+            `;
+            
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
