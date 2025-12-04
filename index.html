@@ -50,19 +50,6 @@
             margin: 0 auto;
         }
 
-        .page-title {
-            font-size: 28px;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        .page-subtitle {
-            color: #a0a0a0;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
         .vehicles-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -136,16 +123,13 @@
 <body>
     <div class="header">
         <div class="logo-container">
-            <!-- Replace 'path-to-your-logo.png' with your actual logo image path -->
-            <img src="/Screenshot 2025-12-04 201500.png" alt="Cautio Logo" class="logo-img" onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block';">
+            <img src="Screenshot 2025-12-04 201500.png" alt="Cautio Logo" class="logo-img" onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block';">
             <div class="logo-fallback" style="display: none; font-size: 32px; font-weight: 700; color: #fff;">cautio</div>
             <span class="project-name">Elite</span>
         </div>
     </div>
 
     <div class="container">
-        <h1 class="page-title">Vehicle Tracking Dashboard</h1>
-        <p class="page-subtitle">Click on any vehicle to view live tracking</p>
         <div class="vehicles-grid" id="vehiclesGrid"></div>
     </div>
 
